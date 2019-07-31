@@ -1,0 +1,50 @@
+
+heiland@asus:~/git/emews2_test/run2_ubu_g_thread1$ gdb ../cancer-immune-EMEWS2-g 
+
+...
+current simulated time: 27000 min (max: 64800 min)
+total agents: 1069
+interval wall time: 0 days, 0 hours, 0 minutes, and 52.5111 seconds 
+total wall time: 0 days, 1 hours, 6 minutes, and 23.1142 seconds 
+
+current simulated time: 27300 min (max: 64800 min)
+total agents: 1088
+interval wall time: 0 days, 0 hours, 0 minutes, and 53.085 seconds 
+total wall time: 0 days, 1 hours, 7 minutes, and 16.1991 seconds 
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000055555558012e in BioFVM::Basic_Agent::set_internal_uptake_constants (this=0x555555f505e0, dt=0.01)
+    at ./BioFVM/BioFVM_basic_agent.cpp:125
+125		double internal_constant_to_discretize_the_delta_approximation = dt * volume / ( (microenvironment->voxels(current_voxel_index)).volume ) ; // needs a fix 
+(gdb) bt
+#0  0x000055555558012e in BioFVM::Basic_Agent::set_internal_uptake_constants (this=0x555555f505e0, dt=0.01)
+    at ./BioFVM/BioFVM_basic_agent.cpp:125
+#1  0x00005555555b5285 in PhysiCell::Secretion::advance (this=0x555555f50b10, pCell=0x555555f505e0, phenotype=..., dt=0.01)
+    at ./core/PhysiCell_phenotype.cpp:842
+#2  0x00005555555c0eae in PhysiCell::Cell_Container::update_all_cells(double, double, double, double) [clone ._omp_fn.3] ()
+    at ./core/PhysiCell_cell_container.cpp:251
+#3  0x00007ffff748cecf in GOMP_parallel () from /usr/lib/x86_64-linux-gnu/libgomp.so.1
+#4  0x00005555555c0110 in PhysiCell::Cell_Container::update_all_cells (this=0x555555a21390, t=27456.009998538895, phenotype_dt_=6, 
+    mechanics_dt_=0.10000000000000001, diffusion_dt_=0.01) at ./core/PhysiCell_cell_container.cpp:248
+#5  0x00005555555bff68 in PhysiCell::Cell_Container::update_all_cells (this=0x555555a21390, t=27456.009998538895)
+    at ./core/PhysiCell_cell_container.cpp:115
+#6  0x00005555555f3d9a in main (argc=2, argv=0x7fffffffde68) at main-immune.cpp:249
+(gdb) print(current_voxel_index)
+$1 = 21845
+(gdb) print(microenvironment->voxels(current_voxel_index))
+$2 = (BioFVM::Voxel &) <error reading variable>
+(gdb) print(microenvironment->voxels(current_voxel_index).volume)
+Cannot access memory at address 0x7ffff8094008
+(gdb) 
+Cannot access memory at address 0x7ffff8094008
+(gdb) print(microenvironment->number_of_voxels)
+$3 = {unsigned int (BioFVM::Microenvironment * const)} 0x55555556e596 <BioFVM::Microenvironment::number_of_voxels()>
+(gdb) print(microenvironment->number_of_voxels())
+$4 = 5625
+(gdb) quit
+A debugging session is active.
+
+	Inferior 1 [process 2132] will be killed.
+
+Quit anyway? (y or n) y

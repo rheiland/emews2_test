@@ -67,6 +67,12 @@
 
 #include "./cancer_immune_3D.h"
 
+#include <signal.h>
+Cell *debug_cell;
+Cell *debug_cell1;
+Cell *debug_cell2;
+
+
 Cell_Definition immune_cell; 
 
 void create_immune_cell_type( void )
@@ -136,7 +142,7 @@ void create_cell_types( void )
 	// same initial histogram of oncoprotein, even if threading means 
 	// that future division and other events are still not identical 
 	// for all runs 
-	SeedRandom( parameters.ints("random_seed") ); 
+	// SeedRandom( parameters.ints("random_seed") ); 
 	
 	// housekeeping 
 	
@@ -211,7 +217,7 @@ void create_cell_types_2D( void )
 	// same initial histogram of oncoprotein, even if threading means 
 	// that future division and other events are still not identical 
 	// for all runs 
-	SeedRandom( parameters.ints("random_seed") ); 
+	// SeedRandom( parameters.ints("random_seed") ); 
 	
 	// housekeeping 
 	
@@ -744,6 +750,22 @@ std::vector<std::string> cancer_immune_coloring_function( Cell* pCell )
 
 void add_elastic_velocity( Cell* pActingOn, Cell* pAttachedTo , double elastic_constant )
 {
+	debug_cell1 = pActingOn;
+	debug_cell2 = pAttachedTo;
+
+	if (pAttachedTo->position.size() != 3) {
+		std::cout << __FILE__ <<": "<<__FUNCTION__ << "  pAttachedTo->ID has position.size()=0;  ID=" <<pAttachedTo->ID<< std::endl;
+		raise(SIGSEGV);
+	}
+	if (pActingOn->position.size() != 3) {
+		std::cout << __FILE__ <<": "<<__FUNCTION__ << "  pActingOn->ID has position.size()=0;  ID=" <<pActingOn->ID<< std::endl;
+		raise(SIGSEGV);
+	}
+	// if ((pActingOn==0x555555c68fa0) && (pAttachedTo==0x555555fc9740)) {
+	// 	std::cout << __FILE__ <<": "<<__FUNCTION__ << "  pActingOn->ID=" <<pActingOn->ID<< ",  pAttachedTo->ID=" <<pAttachedTo->ID<< std::endl;
+	// 	raise(SIGSEGV);
+	// }
+
 	std::vector<double> displacement = pAttachedTo->position - pActingOn->position; 
 	axpy( &(pActingOn->velocity) , elastic_constant , displacement ); 
 	
@@ -754,7 +776,18 @@ void extra_elastic_attachment_mechanics( Cell* pCell, Phenotype& phenotype, doub
 {
 	for( int i=0; i < pCell->state.neighbors.size() ; i++ )
 	{
-		add_elastic_velocity( pCell, pCell->state.neighbors[i], pCell->custom_data["elastic coefficient"] ); 
+		// debug_cell = pCell->state.neighbors[i];
+		// std::cout << __FILE__ <<": "<<__FUNCTION__ << "  debug_cell->ID has position.size()=0;  ID=" <<debug_cell->ID<< std::endl;
+		// raise(SIGSEGV);
+
+		if (pCell->state.neighbors[i]->position.size() != 3) {
+			debug_cell = pCell->state.neighbors[i];
+			// std::cout << __FILE__ <<": "<<__FUNCTION__ << "  debug_cell->ID has position.size()=0;  ID=" <<debug_cell->ID<< std::endl;
+			// raise(SIGSEGV);
+		}
+		else {
+			add_elastic_velocity( pCell, pCell->state.neighbors[i], pCell->custom_data["elastic coefficient"] ); 
+		}
 	}
 
 	return; 
@@ -951,7 +984,7 @@ bool immune_cell_attempt_apoptosis( Cell* pAttacker, Cell* pTarget, double dt )
 //	if( UniformRandom() < pAttacker->custom_data[kill_rate_index] * pTarget->custom_data[oncoprotein_i] * dt )
 	if( UniformRandom() < pAttacker->custom_data[kill_rate_index] * scale * dt )
 	{ 
-		// std::cout << "\t\t kill!" << " " << pTarget->custom_data[oncoprotein_i] << std::endl; 
+//		std::cout << "\t\t kill!" << " " << pTarget->custom_data[oncoprotein_i] << std::endl; 
 		return true; 
 	}
 	return false; 

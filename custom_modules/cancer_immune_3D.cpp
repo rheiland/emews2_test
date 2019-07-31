@@ -365,7 +365,7 @@ void introduce_immune_cells( void )
 	int number_of_immune_cells = 
 		parameters.ints("number_of_immune_cells"); // 7500; // 100; // 40; 
 	double radius_inner = tumor_radius + 
-		parameters.doubles("initial_min_immune_distance_from_tumor"); 30.0; // 75 // 50; 
+		parameters.doubles("initial_min_immune_distance_from_tumor"); // 30.0; // 75 // 50; 
 	double radius_outer = radius_inner + 
 		parameters.doubles("thickness_of_immune_seeding_region"); // 75.0; // 100; // 1000 - 50.0; 
 	
@@ -413,7 +413,7 @@ void introduce_immune_cells_2D( void )
 	int number_of_immune_cells = 
 		parameters.ints("number_of_immune_cells"); // 7500; // 100; // 40; 
 	double radius_inner = tumor_radius + 
-		parameters.doubles("initial_min_immune_distance_from_tumor"); 30.0; // 75 // 50; 
+		parameters.doubles("initial_min_immune_distance_from_tumor"); // 30.0; // 75 // 50; 
 	double radius_outer = radius_inner + 
 		parameters.doubles("thickness_of_immune_seeding_region"); // 75.0; // 100; // 1000 - 50.0; 
 	
